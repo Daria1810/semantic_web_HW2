@@ -3,7 +3,7 @@
 Book recommendation web application backed by RDF and an OWL ontology, with a Jena-powered Spring Boot UI and a Gemini-grounded RAG chatbot.
 
 **Repository:** https://github.com/Daria1810/semantic_web_HW2
-**Group:** 1241EA · **Deadline:** 2026-05-18 23:59 (soft) / 2026-05-20 14:00 (hard).
+**Group:** 1241EA 
 
 ---
 
@@ -12,7 +12,7 @@ Book recommendation web application backed by RDF and an OWL ontology, with a Je
 | Name | Contribution |
 |------|--------------|
 | **TOMA Daria-Maria** | Spring Boot scaffold, Jena `BookRdfService`, book list / detail pages, add-book & change-reading-level forms, RDF/XML upload + vis-network graph visualization, RAG chatbot (Gemini embeddings + in-memory vector store + chat REST API + floating widget JS), end-to-end smoke tests. |
-| **SOLOMON Miruna-Maria** | RDF/XML data (`src/main/resources/data/books.rdf`), OWL ontology (`ontology/book_ontology.ttl`) with defined classes (`ScienceFictionBook`, `BookRecommendedForAlice`, …), GraphDB visualization screenshots, five SPARQL queries (`sparql_owl.txt`) with result screenshots. |
+| **SOLOMON Miruna-Maria** | RDF/XML data (`src/main/resources/data/books.rdf`), OWL ontology (`ontology/book_ontology.ttl`) with defined classes (`ScienceFictionBook`, `BookRecommendedForAlice`, …), OntoGraph visualization screenshots, five SPARQL queries (`sparql_owl.txt`) with result screenshots. |
 
 ---
 
@@ -79,7 +79,7 @@ Without a key, the rest of the app still works; the chat widget shows a clear "n
 2. **Ex 4** — open `/books`; click "Dune" to show the detail page.
 3. **Ex 3** — open *Add book*, add **Harry Potter** (Fantasy, Intermediate); show it in the list; from the list click *Change level* on Hunger Games → Intermediate; refresh to confirm.
 4. **Ex 2** — open *Upload RDF*, pick `src/main/resources/data/books.rdf`; show the interactive vis-network graph; repeat with `ontology/book_ontology.ttl` to show it also handles Turtle/OWL.
-5. **Ex 5** — switch to GraphDB / Protégé and show the ontology visualization (`screenshots/ontology-graph.png`).
+5. **Ex 5** — switch to OntoGraph in Protégé and show the ontology visualization (`screenshots/ontology-graph.png`).
 6. **Ex 6** — paste each of the five queries from `sparql_owl.txt` into the SPARQL tab and run them (or just show the result screenshots).
 7. **Ex 7** — back in the browser, open the floating chat widget. Verify:
    - the 3 starters change with the page
@@ -97,7 +97,7 @@ HW2/
 ├── pom.xml                                   Maven, Spring Boot 3 + Jena
 ├── ontology/book_ontology.ttl                Ex 5 — OWL ontology (Turtle)
 ├── sparql_owl.txt                            Ex 6 — five SPARQL queries
-├── screenshots/                              Ex 5 + 6 — Protégé/GraphDB PNGs
+├── screenshots/                              Ex 5 + 6 — Protégé OntoGraph PNGs
 ├── src/main/resources/
 │   ├── application.properties
 │   ├── data/books.rdf                        Ex 1 — RDF/XML
