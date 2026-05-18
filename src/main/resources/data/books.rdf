@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Semantic Web HW2 — Exercise 1
+  Book recommendation scenario.
+
+  Recommendation rule (informal): a book is recommended for a user iff
+    (book hasTheme T) AND (user preferredTheme T) AND
+    (book suitableReadingLevel L) AND (user readingLevel L)
+
+  Users:
+    Alice  - Intermediate, prefers Science Fiction
+    Bob    - Beginner,     prefers Mystery
+  Books:
+    Dune              - Science Fiction + Fantasy, Advanced
+    The Silent Patient- Mystery + Murder,           Intermediate
+    Hunger Games      - Science Fiction + Fantasy, Beginner
+-->
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:br="http://www.semanticweb.org/hw2/book-recommendation#"
+    xml:base="http://www.semanticweb.org/hw2/book-recommendation">
+
+    <!-- ============================================================ -->
+    <!-- Schema: classes                                                -->
+    <!-- ============================================================ -->
+    <rdfs:Class rdf:about="#Book">
+        <rdfs:label>Book</rdfs:label>
+    </rdfs:Class>
+    <rdfs:Class rdf:about="#User">
+        <rdfs:label>User</rdfs:label>
+    </rdfs:Class>
+    <rdfs:Class rdf:about="#Theme">
+        <rdfs:label>Theme</rdfs:label>
+    </rdfs:Class>
+    <rdfs:Class rdf:about="#ReadingLevel">
+        <rdfs:label>Reading Level</rdfs:label>
+    </rdfs:Class>
+
+    <!-- ============================================================ -->
+    <!-- Schema: properties                                             -->
+    <!-- ============================================================ -->
+    <rdf:Property rdf:about="#title">
+        <rdfs:domain rdf:resource="#Book"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </rdf:Property>
+    <rdf:Property rdf:about="#author">
+        <rdfs:domain rdf:resource="#Book"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </rdf:Property>
+    <rdf:Property rdf:about="#hasTheme">
+        <rdfs:domain rdf:resource="#Book"/>
+        <rdfs:range rdf:resource="#Theme"/>
+    </rdf:Property>
+    <rdf:Property rdf:about="#suitableReadingLevel">
+        <rdfs:domain rdf:resource="#Book"/>
+        <rdfs:range rdf:resource="#ReadingLevel"/>
+    </rdf:Property>
+    <rdf:Property rdf:about="#name">
+        <rdfs:domain rdf:resource="#User"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </rdf:Property>
+    <rdf:Property rdf:about="#readingLevel">
+        <rdfs:domain rdf:resource="#User"/>
+        <rdfs:range rdf:resource="#ReadingLevel"/>
+    </rdf:Property>
+    <rdf:Property rdf:about="#preferredTheme">
+        <rdfs:domain rdf:resource="#User"/>
+        <rdfs:range rdf:resource="#Theme"/>
+    </rdf:Property>
+
+    <!-- ============================================================ -->
+    <!-- Reading levels (individuals)                                   -->
+    <!-- ============================================================ -->
+    <br:ReadingLevel rdf:about="#Beginner">
+        <rdfs:label>Beginner</rdfs:label>
+    </br:ReadingLevel>
+    <br:ReadingLevel rdf:about="#Intermediate">
+        <rdfs:label>Intermediate</rdfs:label>
+    </br:ReadingLevel>
+    <br:ReadingLevel rdf:about="#Advanced">
+        <rdfs:label>Advanced</rdfs:label>
+    </br:ReadingLevel>
+
+    <!-- ============================================================ -->
+    <!-- Themes (individuals)                                           -->
+    <!-- ============================================================ -->
+    <br:Theme rdf:about="#ScienceFiction">
+        <rdfs:label>Science Fiction</rdfs:label>
+    </br:Theme>
+    <br:Theme rdf:about="#Fantasy">
+        <rdfs:label>Fantasy</rdfs:label>
+    </br:Theme>
+    <br:Theme rdf:about="#Mystery">
+        <rdfs:label>Mystery</rdfs:label>
+    </br:Theme>
+    <br:Theme rdf:about="#Murder">
+        <rdfs:label>Murder</rdfs:label>
+    </br:Theme>
+
+    <!-- ============================================================ -->
+    <!-- Users                                                          -->
+    <!-- ============================================================ -->
+    <br:User rdf:about="#Alice">
+        <br:name>Alice</br:name>
+        <br:readingLevel rdf:resource="#Intermediate"/>
+        <br:preferredTheme rdf:resource="#ScienceFiction"/>
+    </br:User>
+
+    <br:User rdf:about="#Bob">
+        <br:name>Bob</br:name>
+        <br:readingLevel rdf:resource="#Beginner"/>
+        <br:preferredTheme rdf:resource="#Mystery"/>
+    </br:User>
+
+    <!-- ============================================================ -->
+    <!-- Books                                                          -->
+    <!-- ============================================================ -->
+    <br:Book rdf:about="#Dune">
+        <br:title>Dune</br:title>
+        <br:author>Frank Herbert</br:author>
+        <br:hasTheme rdf:resource="#ScienceFiction"/>
+        <br:hasTheme rdf:resource="#Fantasy"/>
+        <br:suitableReadingLevel rdf:resource="#Advanced"/>
+    </br:Book>
+
+    <br:Book rdf:about="#TheSilentPatient">
+        <br:title>The Silent Patient</br:title>
+        <br:author>Alex Michaelides</br:author>
+        <br:hasTheme rdf:resource="#Mystery"/>
+        <br:hasTheme rdf:resource="#Murder"/>
+        <br:suitableReadingLevel rdf:resource="#Intermediate"/>
+    </br:Book>
+
+    <br:Book rdf:about="#HungerGames">
+        <br:title>Hunger Games</br:title>
+        <br:author>Suzanne Collins</br:author>
+        <br:hasTheme rdf:resource="#ScienceFiction"/>
+        <br:hasTheme rdf:resource="#Fantasy"/>
+        <br:suitableReadingLevel rdf:resource="#Beginner"/>
+    </br:Book>
+
+</rdf:RDF>
