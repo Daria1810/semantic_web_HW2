@@ -1,0 +1,33 @@
+# Build output
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spring Boot local config (secrets)
+src/main/resources/application-local.properties
+application-local.properties
+.env
+
+# Logs
+*.log
+logs/
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
