@@ -1,0 +1,109 @@
+###############################################################################
+# Semantic Web HW2 — Exercise 6
+# Five SPARQL queries over the book-recommendation OWL ontology
+# (ontology/book_ontology.ttl).
+#
+# Run them in GraphDB (https://graphdb.ontotext.com) or Protégé's SPARQL tab.
+# Screenshots of each result are in screenshots/sparql/query{1..5}.png.
+###############################################################################
+
+
+# -----------------------------------------------------------------------------
+# Query 1 — List every book with its author, comma-separated themes
+#           and the suitable reading level (sorted alphabetically).
+# -----------------------------------------------------------------------------
+PREFIX :     <http://www.semanticweb.org/hw2/book-recommendation#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?title ?author
+       (GROUP_CONCAT(DISTINCT ?themeLabel ; separator=", ") AS ?themes)
+       ?levelLabel
+WHERE {
+    ?book a :Book ;
+          :title  ?title ;
+          :author ?author ;
+          :hasTheme ?theme ;
+          :suitableReadingLevel ?level .
+    ?theme rdfs:label ?themeLabel .
+    ?level rdfs:label ?levelLabel .
+}
+GROUP BY ?title ?author ?levelLabel
+ORDER BY ?title
+
+
+# -----------------------------------------------------------------------------
+# Query 2 — Books that are recommended for Alice: her preferred theme is one
+#           of the book's themes AND her reading level matches the book's
+#           suitable reading level.
+# -----------------------------------------------------------------------------
+PREFIX : <http://www.semanticweb.org/hw2/book-recommendation#>
+
+SELECT ?title
+WHERE {
+    :Alice :preferredTheme ?theme ;
+           :readingLevel   ?level .
+    ?book  a       :Book ;
+           :title  ?title ;
+           :hasTheme              ?theme ;
+           :suitableReadingLevel  ?level .
+}
+
+
+# -----------------------------------------------------------------------------
+# Query 3 — For each user, count how many books in the dataset match BOTH
+#           the user's preferred theme and reading level. Includes users
+#           with zero matches (via OPTIONAL).
+# -----------------------------------------------------------------------------
+PREFIX : <http://www.semanticweb.org/hw2/book-recommendation#>
+
+SELECT ?userName (COUNT(DISTINCT ?book) AS ?recommendedBooks)
+WHERE {
+    ?user a :User ;
+          :name           ?userName ;
+          :preferredTheme ?theme ;
+          :readingLevel   ?level .
+    OPTIONAL {
+        ?book a :Book ;
+              :hasTheme              ?theme ;
+              :suitableReadingLevel  ?level .
+    }
+}
+GROUP BY ?userName
+ORDER BY DESC(?recommendedBooks) ?userName
+
+
+# -----------------------------------------------------------------------------
+# Query 4 — Pairs of distinct books that share at least two themes.
+#           Useful for "you might also like" suggestions.
+# -----------------------------------------------------------------------------
+PREFIX : <http://www.semanticweb.org/hw2/book-recommendation#>
+
+SELECT ?title1 ?title2 (COUNT(DISTINCT ?theme) AS ?sharedThemes)
+WHERE {
+    ?b1 a :Book ; :title ?title1 ; :hasTheme ?theme .
+    ?b2 a :Book ; :title ?title2 ; :hasTheme ?theme .
+    FILTER ( STR(?title1) < STR(?title2) )
+}
+GROUP BY ?title1 ?title2
+HAVING ( COUNT(DISTINCT ?theme) >= 2 )
+ORDER BY DESC(?sharedThemes)
+
+
+# -----------------------------------------------------------------------------
+# Query 5 — Books whose author's name begins with a letter in A–F
+#           (case-insensitive). Returns the author, the title and the
+#           reading-level label. Demonstrates FILTER + REGEX.
+# -----------------------------------------------------------------------------
+PREFIX :     <http://www.semanticweb.org/hw2/book-recommendation#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?author ?title ?levelLabel
+WHERE {
+    ?book a :Book ;
+          :title  ?title ;
+          :author ?author ;
+          :suitableReadingLevel ?level .
+    ?level rdfs:label ?levelLabel .
+    FILTER ( REGEX(?author, "^[A-F]", "i") )
+}
+ORDER BY ?author

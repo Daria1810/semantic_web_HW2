@@ -1,0 +1,197 @@
+@prefix :     <http://www.semanticweb.org/hw2/book-recommendation#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.semanticweb.org/hw2/book-recommendation>
+    a owl:Ontology ;
+    rdfs:label   "Book Recommendation Ontology" ;
+    rdfs:comment "OWL ontology for Semantic Web HW2 (exercise 5). A book is recommended for a user when the user's preferred theme is one of the book's themes AND the user's reading level matches the book's suitable reading level." .
+
+# =============================================================
+# Core classes
+# =============================================================
+:Book          a owl:Class ; rdfs:label "Book" .
+:User          a owl:Class ; rdfs:label "User" .
+:Theme         a owl:Class ; rdfs:label "Theme" .
+:ReadingLevel  a owl:Class ; rdfs:label "Reading Level" .
+
+# Pairwise disjointness so a Book is not also a Theme, etc.
+[] a owl:AllDisjointClasses ;
+   owl:members ( :Book :User :Theme :ReadingLevel ) .
+
+# =============================================================
+# Defined (equivalent) classes — these will be populated by an
+# OWL reasoner (HermiT / Pellet in Protégé, the GraphDB reasoner)
+# =============================================================
+
+:ScienceFictionBook
+    a owl:Class ;
+    rdfs:label "Science Fiction Book" ;
+    rdfs:comment "Any book that has the Science Fiction theme." ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Book
+            [ a owl:Restriction ;
+              owl:onProperty :hasTheme ;
+              owl:hasValue   :ScienceFiction ]
+        )
+    ] .
+
+:BeginnerBook
+    a owl:Class ;
+    rdfs:label "Beginner Book" ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Book
+            [ a owl:Restriction ;
+              owl:onProperty :suitableReadingLevel ;
+              owl:hasValue   :Beginner ]
+        )
+    ] .
+
+:AdvancedBook
+    a owl:Class ;
+    rdfs:label "Advanced Book" ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Book
+            [ a owl:Restriction ;
+              owl:onProperty :suitableReadingLevel ;
+              owl:hasValue   :Advanced ]
+        )
+    ] .
+
+# A book that would be recommended for Alice — same theme (Science Fiction)
+# AND same reading level (Intermediate). Demonstrates the recommendation
+# rule expressed as a defined class.
+:BookRecommendedForAlice
+    a owl:Class ;
+    rdfs:label "Book Recommended For Alice" ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Book
+            [ a owl:Restriction ; owl:onProperty :hasTheme ;             owl:hasValue :ScienceFiction ]
+            [ a owl:Restriction ; owl:onProperty :suitableReadingLevel ; owl:hasValue :Intermediate ]
+        )
+    ] .
+
+:BookRecommendedForBob
+    a owl:Class ;
+    rdfs:label "Book Recommended For Bob" ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Book
+            [ a owl:Restriction ; owl:onProperty :hasTheme ;             owl:hasValue :Mystery ]
+            [ a owl:Restriction ; owl:onProperty :suitableReadingLevel ; owl:hasValue :Beginner ]
+        )
+    ] .
+
+# =============================================================
+# Object properties
+# =============================================================
+:hasTheme
+    a owl:ObjectProperty ;
+    rdfs:label  "has theme" ;
+    rdfs:domain :Book ;
+    rdfs:range  :Theme .
+
+:suitableReadingLevel
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:label  "suitable reading level" ;
+    rdfs:domain :Book ;
+    rdfs:range  :ReadingLevel .
+
+:readingLevel
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:label  "reading level" ;
+    rdfs:domain :User ;
+    rdfs:range  :ReadingLevel .
+
+:preferredTheme
+    a owl:ObjectProperty ;
+    rdfs:label  "preferred theme" ;
+    rdfs:domain :User ;
+    rdfs:range  :Theme .
+
+# =============================================================
+# Datatype properties
+# =============================================================
+:title
+    a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label  "title" ;
+    rdfs:domain :Book ;
+    rdfs:range  xsd:string .
+
+:author
+    a owl:DatatypeProperty ;
+    rdfs:label  "author" ;
+    rdfs:domain :Book ;
+    rdfs:range  xsd:string .
+
+:name
+    a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label  "name" ;
+    rdfs:domain :User ;
+    rdfs:range  xsd:string .
+
+# =============================================================
+# Individuals — Reading Levels
+# =============================================================
+:Beginner     a owl:NamedIndividual , :ReadingLevel ; rdfs:label "Beginner" .
+:Intermediate a owl:NamedIndividual , :ReadingLevel ; rdfs:label "Intermediate" .
+:Advanced     a owl:NamedIndividual , :ReadingLevel ; rdfs:label "Advanced" .
+
+[] a owl:AllDifferent ;
+   owl:distinctMembers ( :Beginner :Intermediate :Advanced ) .
+
+# =============================================================
+# Individuals — Themes
+# =============================================================
+:ScienceFiction a owl:NamedIndividual , :Theme ; rdfs:label "Science Fiction" .
+:Fantasy        a owl:NamedIndividual , :Theme ; rdfs:label "Fantasy" .
+:Mystery        a owl:NamedIndividual , :Theme ; rdfs:label "Mystery" .
+:Murder         a owl:NamedIndividual , :Theme ; rdfs:label "Murder" .
+
+[] a owl:AllDifferent ;
+   owl:distinctMembers ( :ScienceFiction :Fantasy :Mystery :Murder ) .
+
+# =============================================================
+# Individuals — Users
+# =============================================================
+:Alice a owl:NamedIndividual , :User ;
+    :name           "Alice" ;
+    :readingLevel   :Intermediate ;
+    :preferredTheme :ScienceFiction .
+
+:Bob a owl:NamedIndividual , :User ;
+    :name           "Bob" ;
+    :readingLevel   :Beginner ;
+    :preferredTheme :Mystery .
+
+# =============================================================
+# Individuals — Books
+# =============================================================
+:Dune a owl:NamedIndividual , :Book ;
+    :title    "Dune" ;
+    :author   "Frank Herbert" ;
+    :hasTheme :ScienceFiction , :Fantasy ;
+    :suitableReadingLevel :Advanced .
+
+:TheSilentPatient a owl:NamedIndividual , :Book ;
+    :title    "The Silent Patient" ;
+    :author   "Alex Michaelides" ;
+    :hasTheme :Mystery , :Murder ;
+    :suitableReadingLevel :Intermediate .
+
+:HungerGames a owl:NamedIndividual , :Book ;
+    :title    "Hunger Games" ;
+    :author   "Suzanne Collins" ;
+    :hasTheme :ScienceFiction , :Fantasy ;
+    :suitableReadingLevel :Beginner .
