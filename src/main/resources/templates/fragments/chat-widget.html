@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Floating chat widget rendered on every page (exercise 7.1). -->
+<div th:fragment="widget"
+     id="chat-widget"
+     th:attr="data-context=${chatContext ?: 'unknown'}, data-context-label=${chatContextLabel ?: ''}">
+    <button id="chat-toggle" type="button" aria-label="Open chat">Ask the librarian</button>
+    <section id="chat-panel" hidden>
+        <header>
+            <span>Book Librarian</span>
+            <button id="chat-close" type="button" aria-label="Close">&times;</button>
+        </header>
+        <div id="chat-messages"></div>
+        <div id="chat-starters"></div>
+        <form id="chat-form">
+            <input id="chat-input" type="text" placeholder="Ask about a book…" autocomplete="off"/>
+            <button type="submit">Send</button>
+        </form>
+    </section>
+</div>
+<script defer th:src="@{/js/chat-widget.js}"></script>
+</body>
+</html>

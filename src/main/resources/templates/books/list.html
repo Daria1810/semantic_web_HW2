@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('All books')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+
+<main class="container">
+    <h1>Books</h1>
+    <p th:if="${#lists.isEmpty(books)}">No books yet. <a th:href="@{/books/new}">Add the first one</a>.</p>
+
+    <table th:unless="${#lists.isEmpty(books)}" class="books">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Themes</th>
+            <th>Reading level</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="b : ${books}">
+            <td><a th:href="@{/books/{id}(id=${b.id})}" th:text="${b.title}">Title</a></td>
+            <td th:text="${b.author} ?: '—'">Author</td>
+            <td>
+                <span th:each="t, st : ${b.themeLabels}">
+                    <span th:text="${t}"></span><span th:if="${!st.last}">, </span>
+                </span>
+            </td>
+            <td th:text="${b.readingLevelLabel} ?: '—'">Level</td>
+            <td>
+                <a th:href="@{/books/{id}/edit-level(id=${b.id})}">Change level</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<div th:replace="~{fragments/chat-widget :: widget}"></div>
+</body>
+</html>

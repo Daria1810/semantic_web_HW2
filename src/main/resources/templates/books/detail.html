@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${book.title})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+
+<main class="container">
+    <p><a th:href="@{/books}">&larr; Back to all books</a></p>
+    <h1 th:text="${book.title}">Title</h1>
+    <dl class="book-detail">
+        <dt>Author</dt>
+        <dd th:text="${book.author} ?: '—'">Author</dd>
+
+        <dt>Themes</dt>
+        <dd>
+            <span th:each="t, st : ${book.themeLabels}">
+                <span class="tag" th:text="${t}"></span>
+            </span>
+            <span th:if="${#lists.isEmpty(book.themeLabels)}">—</span>
+        </dd>
+
+        <dt>Suitable reading level</dt>
+        <dd th:text="${book.readingLevelLabel} ?: '—'">Level</dd>
+
+        <dt>RDF resource</dt>
+        <dd><code th:text="'http://www.semanticweb.org/hw2/book-recommendation#' + ${book.id}">iri</code></dd>
+    </dl>
+
+    <p>
+        <a th:href="@{/books/{id}/edit-level(id=${book.id})}">Change reading level</a>
+    </p>
+</main>
+
+<div th:replace="~{fragments/chat-widget :: widget}"></div>
+</body>
+</html>

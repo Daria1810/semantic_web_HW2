@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <title th:text="${title}">Book Recommender</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+<header th:fragment="topbar" class="topbar">
+    <a th:href="@{/books}" class="brand">Book Recommender</a>
+    <nav>
+        <a th:href="@{/books}">Books</a>
+        <a th:href="@{/books/new}">Add book</a>
+        <a th:href="@{/upload}">Upload RDF</a>
+    </nav>
+</header>
+</body>
+</html>
