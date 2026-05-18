@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <!-- Floating chat widget rendered on every page (exercise 7.1). -->
-<div th:fragment="widget"
-     id="chat-widget"
+<th:block th:fragment="widget">
+<div id="chat-widget"
      th:attr="data-context=${chatContext ?: 'unknown'}, data-context-label=${chatContextLabel ?: ''}">
     <button id="chat-toggle" type="button" aria-label="Open chat">Ask the librarian</button>
     <section id="chat-panel" hidden>
@@ -20,5 +20,6 @@
     </section>
 </div>
 <script defer th:src="@{/js/chat-widget.js}"></script>
+</th:block>
 </body>
 </html>
