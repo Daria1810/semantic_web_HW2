@@ -6,6 +6,8 @@
 
 <main class="container">
     <h1>Books</h1>
+    <div th:if="${flash}" class="flash success" th:text="${flash}"></div>
+    <div th:if="${flashError}" class="flash error" th:text="${flashError}"></div>
     <p th:if="${#lists.isEmpty(books)}">No books yet. <a th:href="@{/books/new}">Add the first one</a>.</p>
 
     <table th:unless="${#lists.isEmpty(books)}" class="books">

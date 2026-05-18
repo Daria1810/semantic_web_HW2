@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Add book')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+
+<main class="container">
+    <p><a th:href="@{/books}">&larr; Back to all books</a></p>
+    <h1>Add a book</h1>
+
+    <div th:if="${flashError}" class="flash error" th:text="${flashError}"></div>
+
+    <form th:action="@{/books}" method="post" class="form">
+        <label>Title
+            <input type="text" name="title" required maxlength="120"
+                   placeholder="e.g. Harry Potter and the Sorcerer's Stone"/>
+        </label>
+
+        <label>Author
+            <input type="text" name="author" maxlength="120" placeholder="e.g. J.K. Rowling"/>
+        </label>
+
+        <label>Themes (hold &#8984; / Ctrl to pick several)
+            <select name="themes" multiple required>
+                <option th:each="t : ${themes}" th:value="${t.id}" th:text="${t.label}"></option>
+            </select>
+        </label>
+
+        <label>Reading level
+            <select name="readingLevel" required>
+                <option value="" disabled selected>Select a level…</option>
+                <option th:each="l : ${levels}" th:value="${l.id}" th:text="${l.label}"></option>
+            </select>
+        </label>
+
+        <div class="actions">
+            <button type="submit">Add book</button>
+            <a th:href="@{/books}" class="btn secondary">Cancel</a>
+        </div>
+    </form>
+</main>
+
+<div th:replace="~{fragments/chat-widget :: widget}"></div>
+</body>
+</html>

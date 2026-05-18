@@ -6,6 +6,8 @@
 
 <main class="container">
     <p><a th:href="@{/books}">&larr; Back to all books</a></p>
+    <div th:if="${flash}" class="flash success" th:text="${flash}"></div>
+    <div th:if="${flashError}" class="flash error" th:text="${flashError}"></div>
     <h1 th:text="${book.title}">Title</h1>
     <dl class="book-detail">
         <dt>Author</dt>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Change reading level')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+
+<main class="container">
+    <p><a th:href="@{/books/{id}(id=${book.id})}">&larr; Back to <span th:text="${book.title}">title</span></a></p>
+    <h1>Change reading level</h1>
+    <p>Editing the suitable reading level for <strong th:text="${book.title}">title</strong>.</p>
+
+    <form th:action="@{/books/{id}/reading-level(id=${book.id})}" method="post" class="form">
+        <label>Current reading level</label>
+        <p th:text="${book.readingLevelLabel} ?: '—'">level</p>
+
+        <label>New reading level
+            <select name="readingLevel" required>
+                <option th:each="l : ${levels}"
+                        th:value="${l.id}"
+                        th:text="${l.label}"
+                        th:selected="${l.id == book.readingLevelId}"></option>
+            </select>
+        </label>
+
+        <div class="actions">
+            <button type="submit">Save</button>
+            <a th:href="@{/books/{id}(id=${book.id})}" class="btn secondary">Cancel</a>
+        </div>
+    </form>
+</main>
+
+<div th:replace="~{fragments/chat-widget :: widget}"></div>
+</body>
+</html>
