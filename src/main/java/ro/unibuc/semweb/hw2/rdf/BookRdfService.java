@@ -67,6 +67,26 @@ public class BookRdfService {
         return listIndividuals(BR.Theme);
     }
 
+    public synchronized List<UserProfile> listUsers() {
+        List<UserProfile> out = new ArrayList<>();
+        ResIterator it = model.listSubjectsWithProperty(RDF.type, BR.User);
+        while (it.hasNext()) {
+            Resource u = it.next();
+            String name = u.hasProperty(BR.name) ? u.getProperty(BR.name).getString() : u.getLocalName();
+            String level = null;
+            if (u.hasProperty(BR.readingLevel)) {
+                level = labelOrLocalName(u.getProperty(BR.readingLevel).getResource());
+            }
+            String preferred = null;
+            if (u.hasProperty(BR.preferredTheme)) {
+                preferred = labelOrLocalName(u.getProperty(BR.preferredTheme).getResource());
+            }
+            out.add(new UserProfile(u.getLocalName(), name, level, preferred));
+        }
+        out.sort(Comparator.comparing(UserProfile::name, String.CASE_INSENSITIVE_ORDER));
+        return out;
+    }
+
     private List<Vocab> listIndividuals(Resource type) {
         List<Vocab> out = new ArrayList<>();
         ResIterator it = model.listSubjectsWithProperty(RDF.type, type);

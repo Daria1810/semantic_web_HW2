@@ -1,19 +1,18 @@
-// Placeholder — full RAG behaviour lands in exercise 7.
-// For now: open/close panel + render context-aware stub starters.
+// Floating librarian chatbot — calls the RAG endpoints exposed by ChatController.
 (function () {
     const widget = document.getElementById('chat-widget');
     if (!widget) return;
 
-    const toggle  = document.getElementById('chat-toggle');
-    const panel   = document.getElementById('chat-panel');
-    const closeBt = document.getElementById('chat-close');
-    const messages= document.getElementById('chat-messages');
-    const starters= document.getElementById('chat-starters');
-    const form    = document.getElementById('chat-form');
-    const input   = document.getElementById('chat-input');
+    const toggle   = document.getElementById('chat-toggle');
+    const panel    = document.getElementById('chat-panel');
+    const closeBt  = document.getElementById('chat-close');
+    const messages = document.getElementById('chat-messages');
+    const starters = document.getElementById('chat-starters');
+    const form     = document.getElementById('chat-form');
+    const input    = document.getElementById('chat-input');
 
     const context = widget.dataset.context || 'unknown';
-    const ctxLabel= widget.dataset.contextLabel || '';
+    let startersLoaded = false;
 
     function appendMsg(role, text) {
         const div = document.createElement('div');
@@ -21,50 +20,66 @@
         div.textContent = text;
         messages.appendChild(div);
         messages.scrollTop = messages.scrollHeight;
+        return div;
     }
 
-    function renderStarters() {
+    async function loadStarters() {
+        if (startersLoaded) return;
         starters.innerHTML = '';
-        const items = stubStarters();
-        items.forEach(text => {
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.textContent = text;
-            b.addEventListener('click', () => { input.value = text; form.requestSubmit(); });
-            starters.appendChild(b);
-        });
-    }
-
-    function stubStarters() {
-        // Real implementation in exercise 7 will fetch /api/chat/starters?context=...
-        if (context.startsWith('book:')) {
-            return [
-                `Tell me about ${ctxLabel}.`,
-                `Who is the author of ${ctxLabel}?`,
-                `Recommend a similar book to ${ctxLabel}.`
-            ];
+        try {
+            const res = await fetch('/api/chat/starters?context=' + encodeURIComponent(context));
+            if (!res.ok) throw new Error('starters HTTP ' + res.status);
+            const json = await res.json();
+            (json.starters || []).forEach(text => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.textContent = text;
+                b.addEventListener('click', () => {
+                    input.value = text;
+                    form.requestSubmit();
+                });
+                starters.appendChild(b);
+            });
+            startersLoaded = true;
+        } catch (err) {
+            const span = document.createElement('span');
+            span.style.color = '#7a1c1c';
+            span.style.fontSize = '0.8rem';
+            span.style.padding = '6px 10px';
+            span.textContent = 'Could not load conversation starters.';
+            starters.appendChild(span);
         }
-        return [
-            'What is a book I am most likely to enjoy from this list?',
-            'Show me books for Beginner readers.',
-            'Which books match the Mystery theme?'
-        ];
     }
 
-    toggle.addEventListener('click', () => {
-        const open = !panel.hidden;
-        panel.hidden = open;
-        if (!open) { renderStarters(); input.focus(); }
+    toggle.addEventListener('click', async () => {
+        const willOpen = panel.hidden;
+        panel.hidden = !willOpen;
+        if (willOpen) {
+            await loadStarters();
+            input.focus();
+        }
     });
     closeBt.addEventListener('click', () => { panel.hidden = true; });
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const q = input.value.trim();
         if (!q) return;
         appendMsg('user', q);
         input.value = '';
-        // Real call to /api/chat lands in exercise 7.
-        appendMsg('assistant', '(Chatbot wiring coming in exercise 7.)');
+        const pending = appendMsg('assistant', '…');
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: q, context })
+            });
+            if (!res.ok) throw new Error('chat HTTP ' + res.status);
+            const json = await res.json();
+            pending.textContent = json.answer || '(no reply)';
+        } catch (err) {
+            pending.className = 'chat-msg error';
+            pending.textContent = 'Chat failed: ' + err.message;
+        }
     });
 })();
