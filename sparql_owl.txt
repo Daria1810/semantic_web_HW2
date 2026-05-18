@@ -4,6 +4,8 @@
 # (ontology/book_ontology.ttl).
 #
 # Run them in GraphDB (https://graphdb.ontotext.com) or Protégé's SPARQL tab.
+# Note: a named prefix (book:) is used instead of the default ':' because
+# the embedded Sesame parser in Protégé 5.6 rejects empty-prefix declarations.
 # Screenshots of each result are in screenshots/sparql/query{1..5}.png.
 ###############################################################################
 
@@ -11,19 +13,20 @@
 # -----------------------------------------------------------------------------
 # Query 1 — List every book with its author, comma-separated themes
 #           and the suitable reading level (sorted alphabetically).
+#           Uses GROUP_CONCAT to aggregate multi-valued themes.
 # -----------------------------------------------------------------------------
-PREFIX :     <http://www.semanticweb.org/hw2/book-recommendation#>
+PREFIX book: <http://www.semanticweb.org/hw2/book-recommendation#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?title ?author
        (GROUP_CONCAT(DISTINCT ?themeLabel ; separator=", ") AS ?themes)
        ?levelLabel
 WHERE {
-    ?book a :Book ;
-          :title  ?title ;
-          :author ?author ;
-          :hasTheme ?theme ;
-          :suitableReadingLevel ?level .
+    ?b a book:Book ;
+       book:title  ?title ;
+       book:author ?author ;
+       book:hasTheme ?theme ;
+       book:suitableReadingLevel ?level .
     ?theme rdfs:label ?themeLabel .
     ?level rdfs:label ?levelLabel .
 }
@@ -32,21 +35,21 @@ ORDER BY ?title
 
 
 # -----------------------------------------------------------------------------
-# Query 2 — Books that are recommended for Alice: her preferred theme is one
-#           of the book's themes AND her reading level matches the book's
-#           suitable reading level.
+# Query 2 — For each user, list the books that match their preferred theme.
+#           Partial recommendation: theme match only (ignores reading level).
 # -----------------------------------------------------------------------------
-PREFIX : <http://www.semanticweb.org/hw2/book-recommendation#>
+PREFIX book: <http://www.semanticweb.org/hw2/book-recommendation#>
 
-SELECT ?title
+SELECT ?userName ?title
 WHERE {
-    :Alice :preferredTheme ?theme ;
-           :readingLevel   ?level .
-    ?book  a       :Book ;
-           :title  ?title ;
-           :hasTheme              ?theme ;
-           :suitableReadingLevel  ?level .
+    ?user a book:User ;
+          book:name           ?userName ;
+          book:preferredTheme ?theme .
+    ?b a book:Book ;
+       book:title    ?title ;
+       book:hasTheme ?theme .
 }
+ORDER BY ?userName ?title
 
 
 # -----------------------------------------------------------------------------
@@ -54,18 +57,18 @@ WHERE {
 #           the user's preferred theme and reading level. Includes users
 #           with zero matches (via OPTIONAL).
 # -----------------------------------------------------------------------------
-PREFIX : <http://www.semanticweb.org/hw2/book-recommendation#>
+PREFIX book: <http://www.semanticweb.org/hw2/book-recommendation#>
 
-SELECT ?userName (COUNT(DISTINCT ?book) AS ?recommendedBooks)
+SELECT ?userName (COUNT(DISTINCT ?b) AS ?recommendedBooks)
 WHERE {
-    ?user a :User ;
-          :name           ?userName ;
-          :preferredTheme ?theme ;
-          :readingLevel   ?level .
+    ?user a book:User ;
+          book:name           ?userName ;
+          book:preferredTheme ?theme ;
+          book:readingLevel   ?level .
     OPTIONAL {
-        ?book a :Book ;
-              :hasTheme              ?theme ;
-              :suitableReadingLevel  ?level .
+        ?b a book:Book ;
+           book:hasTheme              ?theme ;
+           book:suitableReadingLevel  ?level .
     }
 }
 GROUP BY ?userName
@@ -76,12 +79,12 @@ ORDER BY DESC(?recommendedBooks) ?userName
 # Query 4 — Pairs of distinct books that share at least two themes.
 #           Useful for "you might also like" suggestions.
 # -----------------------------------------------------------------------------
-PREFIX : <http://www.semanticweb.org/hw2/book-recommendation#>
+PREFIX book: <http://www.semanticweb.org/hw2/book-recommendation#>
 
 SELECT ?title1 ?title2 (COUNT(DISTINCT ?theme) AS ?sharedThemes)
 WHERE {
-    ?b1 a :Book ; :title ?title1 ; :hasTheme ?theme .
-    ?b2 a :Book ; :title ?title2 ; :hasTheme ?theme .
+    ?b1 a book:Book ; book:title ?title1 ; book:hasTheme ?theme .
+    ?b2 a book:Book ; book:title ?title2 ; book:hasTheme ?theme .
     FILTER ( STR(?title1) < STR(?title2) )
 }
 GROUP BY ?title1 ?title2
@@ -94,15 +97,15 @@ ORDER BY DESC(?sharedThemes)
 #           (case-insensitive). Returns the author, the title and the
 #           reading-level label. Demonstrates FILTER + REGEX.
 # -----------------------------------------------------------------------------
-PREFIX :     <http://www.semanticweb.org/hw2/book-recommendation#>
+PREFIX book: <http://www.semanticweb.org/hw2/book-recommendation#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?author ?title ?levelLabel
 WHERE {
-    ?book a :Book ;
-          :title  ?title ;
-          :author ?author ;
-          :suitableReadingLevel ?level .
+    ?b a book:Book ;
+       book:title  ?title ;
+       book:author ?author ;
+       book:suitableReadingLevel ?level .
     ?level rdfs:label ?levelLabel .
     FILTER ( REGEX(?author, "^[A-F]", "i") )
 }
