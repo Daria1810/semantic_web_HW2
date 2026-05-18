@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('RDF graph')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+
+<main class="container container-wide">
+    <p><a th:href="@{/upload}">&larr; Upload another file</a></p>
+    <h1>RDF graph</h1>
+    <p>
+        <strong th:text="${filename}">file.rdf</strong> —
+        <span th:text="${triples}">0</span> triples,
+        <span th:text="${nodeCount}">0</span> nodes,
+        <span th:text="${edgeCount}">0</span> edges.
+    </p>
+
+    <div id="graph-container"></div>
+
+    <script type="application/json" id="graph-data" th:utext="${graphJson}">{}</script>
+    <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+    <script th:src="@{/js/graph.js}"></script>
+</main>
+
+<div th:replace="~{fragments/chat-widget :: widget}"></div>
+</body>
+</html>

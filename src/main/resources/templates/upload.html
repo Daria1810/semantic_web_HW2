@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Upload RDF')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+
+<main class="container">
+    <h1>Upload an RDF file</h1>
+    <p>Upload an RDF/XML (or Turtle / N-Triples / JSON-LD) file and we'll render it as an interactive graph using vis-network. You can use <code>src/main/resources/data/books.rdf</code> or <code>ontology/book_ontology.ttl</code> from this repo to try it.</p>
+
+    <div th:if="${flashError}" class="flash error" th:text="${flashError}"></div>
+
+    <form th:action="@{/upload}" method="post" enctype="multipart/form-data" class="form">
+        <label>RDF file
+            <input type="file" name="file" accept=".rdf,.xml,.owl,.ttl,.turtle,.nt,.n3,.jsonld,.json" required/>
+        </label>
+        <div class="actions">
+            <button type="submit">Upload &amp; visualize</button>
+        </div>
+    </form>
+</main>
+
+<div th:replace="~{fragments/chat-widget :: widget}"></div>
+</body>
+</html>
