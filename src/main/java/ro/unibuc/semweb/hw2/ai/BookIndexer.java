@@ -53,7 +53,7 @@ public class BookIndexer {
     public synchronized void reindex() {
         store.clear();
         List<String> docs = buildDocuments();
-        log.info("Embedding {} documents with Gemini ({})…", docs.size(), "text-embedding-004");
+        log.info("Embedding {} documents with Gemini…", docs.size());
         for (int i = 0; i < docs.size(); i++) {
             String text = docs.get(i);
             float[] emb = gemini.embed(text, "RETRIEVAL_DOCUMENT");

@@ -35,7 +35,7 @@ Book recommendation web application backed by RDF and an OWL ontology, with a Je
 - Java 17, Maven, Spring Boot 3.3, Thymeleaf
 - Apache Jena 5.1 (RDF, SPARQL, OWL)
 - vis-network 9.x (browser-side RDF graph)
-- Google Gemini (`text-embedding-004` + `gemini-2.0-flash`) — embeddings + chat
+- Google Gemini (`gemini-embedding-001` + `gemini-2.5-flash`) — embeddings + chat
 
 ---
 
